@@ -50,8 +50,8 @@ host side of the streaming, which LaserGRBL did in the project. It is not the or
 setup and it was not used in the project.
 
 It opens the port at 115200 baud and sends `$H` (GRBL's homing cycle) first. Then it sends the
-G-code file one line at a time and waits for GRBL's `ok` before it sends the next line. It cuts
-each line at the first semicolon or `(`, which drops G-code comments, and it skips empty lines.
+G-code file one line at a time and waits for GRBL's `ok` before it sends the next line. It
+removes comments in round brackets, cuts each line at the first semicolon and skips empty lines.
 It stops at the first `error` or `ALARM`.
 
 ```bash

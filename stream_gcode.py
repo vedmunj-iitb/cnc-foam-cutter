@@ -4,6 +4,7 @@ Written in 2026 for this repo. Not the original streaming setup.
 
     python3 stream_gcode.py /dev/ttyACM0 shape.nc
 """
+import re
 import sys
 import time
 
@@ -34,7 +35,7 @@ def main():
     send(port, '$H')  # home first
     with open(sys.argv[2]) as f:
         for n, raw in enumerate(f, 1):
-            line = raw.split(';')[0].split('(')[0].strip()  # drop comments
+            line = re.sub(r'\([^)]*\)', '', raw).split(';')[0].strip()  # drop comments
             if line:
                 send(port, line)
                 print(f'{n:5d}  {line}')

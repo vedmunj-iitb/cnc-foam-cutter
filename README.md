@@ -8,6 +8,33 @@ in a 3-member team. Guide: Prof. P. S. Gandhi.
 A nichrome hot wire on an X-Y stage cuts foam along a G-code path. The team built the machine
 end to end. The design targets were a 40 x 40 cm area and 0.5 mm resolution.
 
+## The machine
+
+![The X-Y stage, with the Tiva LaunchPad on a screw-terminal board and the stepper driver modules on a breadboard in front](photos/machine.jpg)
+
+*Photo: the X-Y stage, with the Tiva LaunchPad on a screw-terminal board and the stepper driver
+modules on a breadboard in front. The foam letters in front spell the team members' first names.*
+
+<img src="photos/foam_cut.jpg" width="560" alt="Square cut-outs in a foam sheet, with the hot-wire head in front">
+
+*Square cut-outs in a foam sheet, with the hot-wire head in front (video frame).*
+
+<p>
+  <img src="photos/pin_slot_bearing_mount.jpg" width="32%" alt="Pin-slot bearing mount on a guide rod">
+  <img src="photos/y_carriage_lead_screw.jpg" width="32%" alt="The Y carriage on its lead screw and anti-backlash nut, with the X motor and its belt on top">
+  <img src="photos/x_drive_twin_belts.jpg" width="32%" alt="The twin GT2 belts and carriages on X">
+</p>
+
+*Photos, left to right: a pin-slot bearing mount, the Y carriage on its lead screw and
+spring-loaded anti-backlash nut (the motor on top drives X through a belt to the twin-belt
+shaft), and the twin GT2 belts on X.*
+
+<img src="media/pcb_blink.gif" width="400" alt="The Tiva LaunchPad seated on the team's PCB, running blink code">
+
+*The Tiva LaunchPad seated on the team's PCB, running blink code (phone video).*
+
+All photos and the video are from the course project, 2025.
+
 ## How it works
 
 ```
@@ -55,7 +82,7 @@ removes comments in round brackets, cuts each line at the first semicolon and sk
 It stops at the first `error` or `ALARM`.
 
 ```bash
-pip install pyserial
+pip install pyserial        # or, on Ubuntu: sudo apt install python3-serial
 python3 stream_gcode.py /dev/ttyACM0 shape.nc
 ```
 
@@ -67,6 +94,24 @@ Tested in 2026 against a small fake GRBL on a Linux pseudo-terminal, not on the 
 script sent `$H` and then each line only after the `ok` for the line before, with comments and
 empty lines left out. When the fake GRBL answered `error:5` to `$H`, or `error:20` or `ALARM:1`
 to a G-code line, the script stopped there with exit code 1 and sent nothing more.
+
+![stream_gcode.py sending the demo file to the fake GRBL, one line per ok](media/stream_gcode_fake_grbl.gif)
+
+*stream_gcode.py sends the demo file to the fake GRBL. Each line goes out only after the `ok` for
+the line before. No machine, real time.*
+
+Try it without the machine (Linux). The fake GRBL in `tools/` and the demo file in `examples/`
+were also written in 2026:
+
+```bash
+python3 tools/fake_grbl.py ttyFAKE &
+sleep 1
+python3 stream_gcode.py ttyFAKE examples/square.nc
+```
+
+Start the fake GRBL with `--reply '$H=error:5'` to make it answer an error instead. The script
+then stops with `RuntimeError: $H -> error:5` and exit code 1. The fake GRBL quits on its own
+after the last line, or after 30 s if nothing connects.
 
 ## Not in this repo
 
